@@ -125,10 +125,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     setLoggingOut(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    logout();
+    await logout();
     setLoggingOut(false);
-    navigate('/');
+    window.location.href = '/';
   };
 
   const getDashboardPath = () => {

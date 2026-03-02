@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from 'react';
+import axios from 'axios';
 import api from '../utils/api';
 
 const AuthContext = createContext(null);
@@ -41,15 +42,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try {
-      // Call server to revoke refresh tokens and clear session
-      await api.post('/auth/logout');
-    } catch (err) {
-      // Logout locally even if server call fails
-    }
+    // Clear local state FIRST so user is immediately logged out
+    const token = localStorage.getItem('token');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+
+    // Then notify server to revoke tokens (best effort)
+    try {
+      if (token) {
+        await axios.post(`${api.defaults.baseURL}/auth/logout`, null, {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000,
+          withCredentials: true
+        });
+      }
+    } catch (err) {
+      // Server cleanup failed, but user is already logged out locally
+    }
   };
 
   const updateUser = (userData) => {

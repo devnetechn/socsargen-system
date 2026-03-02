@@ -13,7 +13,8 @@ import {
   FiMapPin,
   FiInbox,
   FiUserPlus,
-  FiVideo
+  FiVideo,
+  FiAward
 } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../utils/api';
@@ -185,10 +186,6 @@ const AdminDashboard = () => {
             <FiFileText className="text-primary-600 text-2xl mx-auto mb-2" />
             <p className="text-sm font-medium">News</p>
           </Link>
-          <Link to="/admin/sch-stories" className="card text-center hover:shadow-lg transition p-4">
-            <FiVideo className="text-primary-600 text-2xl mx-auto mb-2" />
-            <p className="text-sm font-medium">SCH Stories</p>
-          </Link>
           <Link to="/admin/jobs" className="card text-center hover:shadow-lg transition p-4">
             <FiBriefcase className="text-primary-600 text-2xl mx-auto mb-2" />
             <p className="text-sm font-medium">Jobs</p>
@@ -213,6 +210,10 @@ const AdminDashboard = () => {
           <Link to="/admin/hr" className="card text-center hover:shadow-lg transition p-4">
             <FiUserPlus className="text-primary-600 text-2xl mx-auto mb-2" />
             <p className="text-sm font-medium">HR Management</p>
+          </Link>
+          <Link to="/admin/awards" className="card text-center hover:shadow-lg transition p-4">
+            <FiAward className="text-primary-600 text-2xl mx-auto mb-2" />
+            <p className="text-sm font-medium">Awards</p>
           </Link>
         </div>
 

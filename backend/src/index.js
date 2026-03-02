@@ -19,7 +19,8 @@ const uploadRoutes = require('./routes/upload.routes');
 const jobsRoutes = require('./routes/jobs.routes');
 const applicationsRoutes = require('./routes/applications.routes');
 const usersRoutes = require('./routes/users.routes');
-const schStoriesRoutes = require('./routes/schStories.routes');
+
+const awardsRoutes = require('./routes/awards.routes');
 
 // Import services
 const { handleChatMessage, saveMessage } = require('./services/chat.service');
@@ -123,7 +124,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/applications', applicationsRoutes);
 app.use('/api/users', usersRoutes);
-app.use('/api/sch-stories', schStoriesRoutes);
+
+app.use('/api/awards', awardsRoutes);
 
 // ===========================================
 // SOCKET.IO CHAT HANDLERS

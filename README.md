@@ -135,9 +135,13 @@ Kung successful, makita nimo ni:
   Email: admin@socsargen-hospital.com
   Password: admin123
 
-  Sample Doctor Logins:
-  Email: dr.santos@socsargen-hospital.com
+  Sample Doctor Login:
+  Email: doctor.santos@socsargen-hospital.com
   Password: doctor123
+
+  Sample HR Login:
+  Email: hr@socsargen-hospital.com
+  Password: hr123
 ```
 
 #### 3.5 (Optional) Add Gemini API Key para sa AI Chatbot:

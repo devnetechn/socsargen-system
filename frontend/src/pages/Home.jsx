@@ -31,6 +31,7 @@ import hero3Img from '../assets/hero3.jpg';
 import hero4Img from '../assets/hero4.jpg';
 import hero5Img from '../assets/hero5.jpg';
 import hero6Img from '../assets/hero6.jpg';
+import storyVideo1 from '../assets/video1.mp4';
 
 const Home = () => {
   // Hero slideshow state
@@ -58,6 +59,44 @@ const Home = () => {
       }
     }
   };
+
+  // Hardcoded patient testimonials
+  const patientTestimonials = [
+    {
+      id: 1,
+      title: 'Recovery Journey',
+      patientName: 'KARELLE M. RABIA',
+      quote: 'I am deeply grateful to Socsargen County Hospital. It was here that I truly experienced genuine compassion and care from every staff member.',
+      year: '2025',
+    },
+    {
+      id: 2,
+      title: 'Heart Surgery Success',
+      patientName: 'JUAN D. SANTOS',
+      quote: 'The doctors and nurses went above and beyond to make sure I was comfortable throughout my treatment. I felt like family here.',
+      year: '2025',
+    },
+    {
+      id: 3,
+      title: 'Safe Delivery',
+      patientName: 'MARIA L. CRUZ',
+      quote: 'From admission to discharge, every step was handled with professionalism and warmth. I highly recommend this hospital to everyone.',
+      year: '2024',
+    },
+  ];
+
+  // Testimonial slider state
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const currentStory = patientTestimonials[currentStoryIndex] || null;
+
+  const goToPrevStory = () => {
+    setCurrentStoryIndex((prev) => (prev - 1 + patientTestimonials.length) % patientTestimonials.length);
+  };
+
+  const goToNextStory = () => {
+    setCurrentStoryIndex((prev) => (prev + 1) % patientTestimonials.length);
+  };
+
   const heroSlides = [
     {
       image: hero1Img,
@@ -216,31 +255,6 @@ const Home = () => {
     })
   });
 
-  // Fetch all published SCH stories from API
-  const { data: schStories } = useQuery({
-    queryKey: ['schStories', 'published'],
-    queryFn: () => api.get('/sch-stories/published').then(res => res.data).catch((error) => {
-      console.error('Failed to fetch SCH stories:', error);
-      return [];
-    })
-  });
-
-  // SCH Stories slider state
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
-  const currentStory = schStories?.[currentStoryIndex] || null;
-
-  const goToPrevStory = () => {
-    if (schStories?.length > 0) {
-      setCurrentStoryIndex((prev) => (prev - 1 + schStories.length) % schStories.length);
-    }
-  };
-
-  const goToNextStory = () => {
-    if (schStories?.length > 0) {
-      setCurrentStoryIndex((prev) => (prev + 1) % schStories.length);
-    }
-  };
-
   // HMO Partners data and state
   const [hmoSearchQuery, setHmoSearchQuery] = useState('');
   const [hmoSelectedCategory, setHmoSelectedCategory] = useState('All');
@@ -283,13 +297,6 @@ const Home = () => {
     const matchesCategory = hmoSelectedCategory === 'All' || partner.category === hmoSelectedCategory;
     return matchesSearch && matchesCategory;
   });
-
-  // Get video URL helper
-  const getVideoUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    return `${getBaseURL()}${url}`;
-  };
 
   // Format date helper
   const formatNewsDate = (dateString) => {
@@ -813,7 +820,7 @@ const Home = () => {
 
           <div className="max-w-5xl mx-auto relative">
             {/* Previous Button */}
-            {schStories?.length > 1 && (
+            {patientTestimonials.length > 1 && (
               <button
                 onClick={goToPrevStory}
                 className="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white hover:bg-primary-50 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 border border-gray-200"
@@ -825,55 +832,43 @@ const Home = () => {
 
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
               <div className="grid md:grid-cols-2">
-                {/* LEFT: Video */}
+                {/* LEFT: Single Video */}
                 <div className="relative aspect-video md:aspect-auto md:h-full bg-black">
-                  {currentStory?.videoUrl ? (
-                    <video
-                      ref={videoRef}
-                      key={currentStory.id}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="w-full h-full object-cover"
-                    >
-                      <source src={getVideoUrl(currentStory.videoUrl)} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-800">
-                      <div className="text-center text-white">
-                        <FiUser className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        <p className="text-sm opacity-75">No video available</p>
-                      </div>
-                    </div>
-                  )}
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                  >
+                    <source src={storyVideo1} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                   {/* Video controls */}
-                  {currentStory?.videoUrl && (
-                    <div className="absolute bottom-4 left-4 flex gap-2">
-                      <button
-                        onClick={toggleVideoMute}
-                        className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
-                        aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
-                      >
-                        {isVideoMuted ? (
-                          <FiVolumeX className="w-5 h-5 text-gray-700" />
-                        ) : (
-                          <FiVolume2 className="w-5 h-5 text-primary-600" />
-                        )}
-                      </button>
-                      <button
-                        onClick={toggleFullscreen}
-                        className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
-                        aria-label="Fullscreen"
-                      >
-                        <FiMaximize className="w-5 h-5 text-gray-700 hover:text-primary-600" />
-                      </button>
-                    </div>
-                  )}
+                  <div className="absolute bottom-4 left-4 flex gap-2">
+                    <button
+                      onClick={toggleVideoMute}
+                      className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
+                      aria-label={isVideoMuted ? 'Unmute video' : 'Mute video'}
+                    >
+                      {isVideoMuted ? (
+                        <FiVolumeX className="w-5 h-5 text-gray-700" />
+                      ) : (
+                        <FiVolume2 className="w-5 h-5 text-primary-600" />
+                      )}
+                    </button>
+                    <button
+                      onClick={toggleFullscreen}
+                      className="w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300"
+                      aria-label="Fullscreen"
+                    >
+                      <FiMaximize className="w-5 h-5 text-gray-700 hover:text-primary-600" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* RIGHT: Content */}
+                {/* RIGHT: Rotating Patient Comments */}
                 <div className="p-5 sm:p-8 md:p-10 flex flex-col justify-center">
                   <span className="inline-block bg-primary-100 text-primary-700 text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1 sm:py-1.5 rounded-full mb-4 sm:mb-6 w-fit">
                     {currentStory?.title || 'Patient Highlight'}
@@ -881,7 +876,7 @@ const Home = () => {
                   <blockquote className="text-base sm:text-xl md:text-2xl text-gray-700 italic mb-5 sm:mb-8 leading-relaxed relative">
                     <span className="absolute -top-3 -left-1 sm:-top-4 sm:-left-2 text-4xl sm:text-6xl text-primary-200 font-serif leading-none">"</span>
                     <span className="relative z-10">
-                      {currentStory?.quote || 'I am deeply Grateful to Socsargen County Hospital, it was here that I Truly Experienced genuine compassion and care.'}
+                      {currentStory?.quote}
                     </span>
                   </blockquote>
                   <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -889,15 +884,15 @@ const Home = () => {
                       <FiUser className="w-5 h-5 sm:w-7 sm:h-7 text-primary-600" />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-800 text-sm sm:text-lg">{currentStory?.patientName || 'KARELLE M. RABIA'}</p>
-                      <p className="text-gray-500 text-xs sm:text-sm">Patient{currentStory?.year ? ` - ${currentStory.year}` : ''}</p>
+                      <p className="font-semibold text-gray-800 text-sm sm:text-lg">{currentStory?.patientName}</p>
+                      <p className="text-gray-500 text-xs sm:text-sm">Patient - {currentStory?.year}</p>
                     </div>
                   </div>
 
                   {/* Slide indicators */}
-                  {schStories?.length > 1 && (
+                  {patientTestimonials.length > 1 && (
                     <div className="flex items-center gap-2 mb-6">
-                      {schStories.map((_, index) => (
+                      {patientTestimonials.map((_, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentStoryIndex(index)}
@@ -910,7 +905,7 @@ const Home = () => {
                         />
                       ))}
                       <span className="ml-2 text-sm text-gray-500">
-                        {currentStoryIndex + 1} / {schStories.length}
+                        {currentStoryIndex + 1} / {patientTestimonials.length}
                       </span>
                     </div>
                   )}
@@ -927,7 +922,7 @@ const Home = () => {
             </div>
 
             {/* Next Button */}
-            {schStories?.length > 1 && (
+            {patientTestimonials.length > 1 && (
               <button
                 onClick={goToNextStory}
                 className="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white hover:bg-primary-50 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 border border-gray-200"
@@ -1142,8 +1137,11 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Patient's Choice Award Section */}
+      <PatientChoiceAwardHome />
+
       {/* Section 11: Careers/Hiring Section */}
-      <section className="py-12 sm:py-20 bg-white">
+      <section className="py-12 sm:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 sm:mb-14">
             <p className="text-primary-600 font-semibold text-xs sm:text-sm uppercase tracking-widest mb-2 sm:mb-3" style={{ fontFamily: 'var(--font-display)' }}>Careers</p>
@@ -1314,6 +1312,141 @@ const Home = () => {
         ></iframe>
       </section>
     </div>
+  );
+};
+
+// Color theme mapping for awards
+const AWARD_THEMES = {
+  rose:    { gradient: 'from-rose-500 to-pink-600',    bgLight: 'bg-rose-50',    text: 'text-rose-600',    border: 'border-rose-200' },
+  amber:   { gradient: 'from-amber-500 to-yellow-600',  bgLight: 'bg-amber-50',   text: 'text-amber-600',   border: 'border-amber-200' },
+  emerald: { gradient: 'from-emerald-500 to-green-600', bgLight: 'bg-emerald-50',  text: 'text-emerald-600',  border: 'border-emerald-200' },
+  blue:    { gradient: 'from-blue-500 to-indigo-600',   bgLight: 'bg-blue-50',    text: 'text-blue-600',    border: 'border-blue-200' },
+  purple:  { gradient: 'from-purple-500 to-violet-600', bgLight: 'bg-purple-50',  text: 'text-purple-600',  border: 'border-purple-200' },
+};
+
+// Patient's Choice Award Section for Home Page
+const PatientChoiceAwardHome = () => {
+  const API_URL = getBaseURL();
+  const { data: awards, isLoading } = useQuery({
+    queryKey: ['awards', 'home'],
+    queryFn: () => api.get('/awards?limit=3').then(res => res.data)
+  });
+
+  if (isLoading) {
+    return (
+      <section className="py-12 sm:py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 animate-pulse" />
+            <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-3 animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded w-96 mx-auto animate-pulse" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg animate-pulse border border-gray-100">
+                <div className="h-64 bg-gray-200" />
+                <div className="p-5 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!awards || awards.length === 0) return null;
+
+  return (
+    <section className="py-12 sm:py-20 bg-white">
+      <div className="container mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
+            <FiAward className="w-8 h-8 text-amber-600" />
+          </div>
+          <p className="text-amber-600 font-semibold text-xs sm:text-sm uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-display)' }}>Recognition</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+            Patient's Choice Award
+          </h2>
+          <p className="text-gray-500 text-sm sm:text-base max-w-2xl mx-auto">
+            Celebrating the departments recognized by our patients for their exceptional care and service.
+          </p>
+          <div className="w-16 h-1 bg-gradient-to-r from-amber-400 to-yellow-500 mx-auto rounded-full mt-5"></div>
+        </div>
+
+        {/* Award Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {awards.map((award) => {
+            const theme = AWARD_THEMES[award.colorTheme] || AWARD_THEMES.amber;
+            const photoSrc = award.photoUrl
+              ? (award.photoUrl.startsWith('http') ? award.photoUrl : `${API_URL}${award.photoUrl}`)
+              : null;
+
+            return (
+              <div
+                key={award.id}
+                className={`relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border ${theme.border} group`}
+              >
+                {/* Photo */}
+                <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                  {photoSrc ? (
+                    <img
+                      src={photoSrc}
+                      alt={award.recipient}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className={`w-full h-full bg-gradient-to-br ${theme.gradient} flex items-center justify-center`}>
+                      <FiAward className="w-16 h-16 text-white/40" />
+                    </div>
+                  )}
+
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+
+                  {/* Award badge */}
+                  <div className={`absolute top-3 right-3 ${theme.bgLight} backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-sm`}>
+                    <FiAward className={`w-3.5 h-3.5 ${theme.text}`} />
+                    <span className={`text-[11px] font-bold ${theme.text} uppercase tracking-wide`}>Award</span>
+                  </div>
+
+                  {/* Title on photo */}
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <h3 className="text-white font-bold text-lg leading-tight drop-shadow-lg">
+                      {award.title}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-5">
+                  {/* Recipient */}
+                  <p className={`font-semibold ${theme.text} text-sm mb-2`}>
+                    {award.recipient}
+                  </p>
+
+                  {/* Description */}
+                  <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
+                    {award.description}
+                  </p>
+
+                  {/* Vote count */}
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <FiHeart className={`w-4 h-4 ${theme.text}`} />
+                    <span className="text-sm text-gray-600">
+                      <span className="font-bold text-gray-800">{award.votes?.toLocaleString()}</span> patient votes
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 };
 

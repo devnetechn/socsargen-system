@@ -33,6 +33,20 @@ const getAllDoctors = async (req, res) => {
 
     const result = await pool.query(query, params);
 
+    // Fetch schedule days for all returned doctors
+    const doctorIds = result.rows.map(d => d.id);
+    let schedulesMap = {};
+    if (doctorIds.length > 0) {
+      const schedulesResult = await pool.query(
+        `SELECT doctor_id, day_of_week FROM doctor_schedules WHERE doctor_id = ANY($1) ORDER BY day_of_week`,
+        [doctorIds]
+      );
+      for (const s of schedulesResult.rows) {
+        if (!schedulesMap[s.doctor_id]) schedulesMap[s.doctor_id] = [];
+        schedulesMap[s.doctor_id].push(s.day_of_week);
+      }
+    }
+
     res.json(result.rows.map(doc => ({
       id: doc.id,
       firstName: doc.first_name,
@@ -43,7 +57,8 @@ const getAllDoctors = async (req, res) => {
       bio: doc.bio,
       photoUrl: doc.photo_url,
       consultationFee: doc.consultation_fee,
-      isAvailable: doc.is_available
+      isAvailable: doc.is_available,
+      scheduleDays: schedulesMap[doc.id] || []
     })));
   } catch (error) {
     console.error('Get doctors error:', error);

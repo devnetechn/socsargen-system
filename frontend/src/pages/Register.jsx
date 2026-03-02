@@ -29,6 +29,16 @@ const Register = () => {
     });
   };
 
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) errors.push('at least 8 characters');
+    if (!/[A-Z]/.test(password)) errors.push('one uppercase letter');
+    if (!/[a-z]/.test(password)) errors.push('one lowercase letter');
+    if (!/[0-9]/.test(password)) errors.push('one number');
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password)) errors.push('one special character (!@#$%...)');
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -37,8 +47,9 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      toast.error(`Password must contain: ${passwordErrors.join(', ')}`);
       return;
     }
 
@@ -54,7 +65,13 @@ const Register = () => {
       toast.success('Registration successful! Welcome to Socsargen Hospital.');
       navigate('/patient/dashboard');
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Registration failed. Please try again.');
+      // Handle express-validator errors array format: { errors: [...] }
+      const validationErrors = error.response?.data?.errors;
+      if (validationErrors && validationErrors.length > 0) {
+        toast.error(validationErrors[0].msg);
+      } else {
+        toast.error(error.response?.data?.error || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -151,7 +168,7 @@ const Register = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Password * <span className="text-gray-400 font-normal">(min. 8 chars)</span>
+                  Password *
                 </label>
                 <div className="relative">
                   <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -174,6 +191,17 @@ const Register = () => {
                     {showPassword ? <FiEyeOff className="w-4 h-4" /> : <FiEye className="w-4 h-4" />}
                   </button>
                 </div>
+                {formData.password && (() => {
+                  const errs = validatePassword(formData.password);
+                  return errs.length > 0 ? (
+                    <p className="mt-1 text-xs text-amber-600">Needs: {errs.join(', ')}</p>
+                  ) : (
+                    <p className="mt-1 text-xs text-green-600">Password looks good!</p>
+                  );
+                })()}
+                {!formData.password && (
+                  <p className="mt-1 text-xs text-gray-400">Min. 8 chars, uppercase, lowercase, number, special char</p>
+                )}
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1.5">
