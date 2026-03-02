@@ -661,9 +661,10 @@ const Home = () => {
           ) : (doctorsData?.data || doctorsData || []).length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 max-w-6xl mx-auto mb-8 sm:mb-10">
               {(doctorsData?.data || doctorsData || []).slice(0, 6).map((doctor) => (
-                <div
+                <Link
                   key={doctor.id}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  to="/doctors"
+                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
                 >
                   <div className="aspect-square overflow-hidden bg-gray-100">
                     {doctor.photoUrl || doctor.photo_url ? (
@@ -687,7 +688,7 @@ const Home = () => {
                       {doctor.specialization || doctor.specialty}
                     </p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (
@@ -728,9 +729,10 @@ const Home = () => {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto">
             {healthPackages.map((pkg) => (
-              <div
+              <Link
                 key={pkg.id}
-                className="bg-gradient-to-br from-primary-50 to-white border border-primary-100 rounded-xl p-4 sm:p-6 hover:shadow-lg hover:border-primary-300 transition-all duration-300 group"
+                to="/services"
+                className="bg-gradient-to-br from-primary-50 to-white border border-primary-100 rounded-xl p-4 sm:p-6 hover:shadow-lg hover:border-primary-300 transition-all duration-300 group cursor-pointer block"
               >
                 <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-xl flex items-center justify-center mb-3 sm:mb-4 text-primary-600 group-hover:bg-primary-500 group-hover:text-white transition-colors duration-300">
                   {pkg.icon}
@@ -741,7 +743,7 @@ const Home = () => {
                 <p className="text-gray-500 text-xs sm:text-sm">
                   {pkg.description}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -1163,9 +1165,10 @@ const Home = () => {
           ) : (jobsData?.data || jobsData || []).length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {(jobsData?.data || jobsData || []).slice(0, 6).map((job) => (
-                <div
+                <Link
                   key={job.id}
-                  className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-primary-300 transition-all duration-300 group"
+                  to="/careers"
+                  className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-primary-300 transition-all duration-300 group cursor-pointer block"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary-500 transition-colors">
@@ -1186,7 +1189,7 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (
@@ -1386,9 +1389,10 @@ const PatientChoiceAwardHome = () => {
               : null;
 
             return (
-              <div
+              <Link
                 key={award.id}
-                className={`relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border ${theme.border} group`}
+                to="/news"
+                className={`relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border ${theme.border} group block cursor-pointer`}
               >
                 {/* Photo */}
                 <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -1441,7 +1445,7 @@ const PatientChoiceAwardHome = () => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
