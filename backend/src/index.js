@@ -30,7 +30,7 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS - Whitelist allowed origins
-const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:5174')
+const allowedOrigins = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:5174')
   .split(',')
   .map(s => s.trim());
 
@@ -435,14 +435,18 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0'; // Listen on all network interfaces for LAN access
 
-server.listen(PORT, HOST, () => {
-  console.log('===========================================');
-  console.log('  SOCSARGEN HOSPITAL SYSTEM API');
-  console.log('===========================================');
-  console.log(`  Server running on http://${HOST}:${PORT}`);
-  console.log(`  LAN Access: http://<your-ip>:${PORT}`);
-  console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('===========================================');
+// Run database migration on startup
+const migrate = require('./database/migrate');
+migrate().then(() => {
+  server.listen(PORT, HOST, () => {
+    console.log('===========================================');
+    console.log('  SOCSARGEN HOSPITAL SYSTEM API');
+    console.log('===========================================');
+    console.log(`  Server running on http://${HOST}:${PORT}`);
+    console.log(`  LAN Access: http://<your-ip>:${PORT}`);
+    console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('===========================================');
+  });
 });
 
 module.exports = { app, io, server };

@@ -3,15 +3,7 @@ const { Pool } = require('pg');
 // Determine SSL config based on environment and connection type
 const getSSLConfig = () => {
   if (process.env.NODE_ENV !== 'production') return false;
-  // Render internal URLs don't need SSL, external URLs do
-  // Support both by using rejectUnauthorized: false
-  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('render.com')) {
-    return { rejectUnauthorized: false };
-  }
-  // For Render internal URLs (no .render.com in hostname), try without SSL first
-  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('dpg-')) {
-    return false;
-  }
+  // Supabase and other cloud PostgreSQL providers require SSL
   return { rejectUnauthorized: false };
 };
 
