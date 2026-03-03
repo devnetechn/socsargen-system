@@ -27,6 +27,8 @@ const { handleChatMessage, saveMessage } = require('./services/chat.service');
 
 // Initialize Express app
 const app = express();
+// Trust proxy for Render/cloud deployment (needed for rate limiter)
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // CORS - Whitelist allowed origins

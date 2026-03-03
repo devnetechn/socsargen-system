@@ -9,7 +9,9 @@ const getSSLConfig = () => {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: getSSLConfig()
+  ssl: getSSLConfig(),
+  // Force IPv4 - Render free tier doesn't support IPv6
+  connectionTimeoutMillis: 10000,
 });
 
 pool.on('connect', () => {
