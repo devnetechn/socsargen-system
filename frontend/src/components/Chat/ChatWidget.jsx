@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { FiX, FiSend, FiUser, FiUsers, FiMessageCircle, FiChevronDown } from 'react-icons/fi';
+import { FiX, FiSend, FiUser, FiUsers, FiChevronDown } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 import { useChat } from '../../hooks/useChat';
 
 const ChatWidget = () => {
@@ -201,7 +202,7 @@ const ChatWidget = () => {
                   {/* Avatar */}
                   <div className="relative">
                     <div className="w-10 h-10 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                      <span className="text-lg">🏥</span>
+                      <FaHeart className="w-5 h-5 text-white" />
                     </div>
                     {/* Online indicator */}
                     <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-primary-600 ${isConnected ? 'bg-green-400' : 'bg-yellow-400'}`} />
@@ -284,7 +285,7 @@ const ChatWidget = () => {
                             {msg.sender === 'staff' ? (
                               <FiUser className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                             ) : (
-                              <span className="text-xs">🏥</span>
+                              <FaHeart className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                             )}
                           </div>
                         )}
@@ -333,7 +334,7 @@ const ChatWidget = () => {
                 {isTyping && (
                   <div className="flex justify-start msg-bot">
                     <div className="w-7 h-7 bg-primary-50 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-2 mt-1 shrink-0">
-                      <span className="text-xs">🏥</span>
+                      <FaHeart className="w-3.5 h-3.5 text-primary-600 dark:text-primary-400" />
                     </div>
                     <div className="bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm border border-gray-100 dark:border-slate-700/60">
                       <div className="flex items-center gap-1.5">
@@ -441,7 +442,7 @@ const ChatWidget = () => {
               hover:from-primary-700 hover:to-primary-800 transition-all duration-300 hover:scale-[1.03] active:scale-95"
             aria-label="Open chat"
           >
-            <FiMessageCircle className="w-6 h-6 sm:w-5 sm:h-5" strokeWidth={2} />
+            <FaHeart className="w-6 h-6 sm:w-5 sm:h-5" />
             <div className="hidden sm:block text-left">
               <p className="font-display font-semibold text-[13px] leading-tight">Chat with us</p>
               <p className="text-[11px] text-primary-200/80 leading-tight mt-0.5">We're here to help</p>
